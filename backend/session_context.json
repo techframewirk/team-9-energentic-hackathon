@@ -1,0 +1,102 @@
+{
+  "grid": {
+    "dr_signal": "reduce_usage_peak_6PM",
+    "priority": "high"
+  },
+  "house": {
+    "thermostat": 23,
+    "ev_status": "charging",
+    "geyser": "on"
+  },
+  "weather": {
+    "temp_celsius": 14.3,
+    "is_raining_now": false,
+    "rain_probability_next_hours": 0,
+    "forecast": [
+      {
+        "ts": "2025-05-15T16:00",
+        "temp_c": 13.9,
+        "prob_rain": 0,
+        "weathercode": 0
+      },
+      {
+        "ts": "2025-05-15T17:00",
+        "temp_c": 15.8,
+        "prob_rain": 0,
+        "weathercode": 0
+      },
+      {
+        "ts": "2025-05-15T18:00",
+        "temp_c": 17.9,
+        "prob_rain": 0,
+        "weathercode": 0
+      },
+      {
+        "ts": "2025-05-15T19:00",
+        "temp_c": 20.4,
+        "prob_rain": 0,
+        "weathercode": 0
+      },
+      {
+        "ts": "2025-05-15T20:00",
+        "temp_c": 21.2,
+        "prob_rain": 0,
+        "weathercode": 3
+      },
+      {
+        "ts": "2025-05-15T21:00",
+        "temp_c": 20.0,
+        "prob_rain": 0,
+        "weathercode": 0
+      }
+    ],
+    "last_updated": "2025-05-15T16:22:42Z"
+  },
+  "insights": [
+    {
+      "id": "681412b5-a366-450d-8549-3ce20e9aa407",
+      "timestamp": "2025-05-15T16:22:23Z",
+      "from": "AnalysisAgent",
+      "to": "TeacherAgent",
+      "type": "insight",
+      "payload": {
+        "recommendation": "{\"recommendation\": \"Reduce thermostat temperature and consider pausing EV charging until after 7PM to reduce peak demand.\", \"confidence\": 0.95}"
+      },
+      "reason": "LLM-generated structured analysis"
+    },
+    {
+      "id": "f2ab7d57-e9d1-410e-941c-076fdd062e18",
+      "timestamp": "2025-05-15T16:22:34Z",
+      "from": "AnalysisAgent",
+      "to": "TeacherAgent",
+      "type": "insight",
+      "payload": {
+        "recommendation": "{\"recommendation\": \"Reduce thermostat temperature and postpone EV charging to off-peak hours.\", \"confidence\": 0.95}"
+      },
+      "reason": "LLM-generated structured analysis"
+    },
+    {
+      "id": "e4190a3e-a2ca-45cb-85e6-274a525d63a2",
+      "timestamp": "2025-05-15T16:22:43Z",
+      "from": "AnalysisAgent",
+      "to": "TeacherAgent",
+      "type": "insight",
+      "payload": {
+        "recommendation": "{\"recommendation\": \"Reduce thermostat temperature and postpone EV charging to reduce peak load electricity usage.\", \"confidence\": 0.95}"
+      },
+      "reason": "LLM-generated structured analysis"
+    }
+  ],
+  "actions": [],
+  "flex_offers": [],
+  "beckn_transactions": {},
+  "world_engine_events": [],
+  "user_profile": {},
+  "metrics": {
+    "energy_saved_kwh": 0.0,
+    "cost_saved_inr": 0.0,
+    "co2_avoided_kg": 0.0
+  },
+  "log_pointer": "/Users/amoghshet/Documents/BECKNHACKATHON/PROTOTYPE/backend/logs/agent_actions.log",
+  "last_cycle": "2025-05-15T16:22:47Z"
+}

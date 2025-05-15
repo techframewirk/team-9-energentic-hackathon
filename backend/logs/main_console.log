@@ -1,0 +1,8 @@
+✨ agentic-home-energy orchestrator running – Ctrl-C to exit
+🤖 CEO says: To lower electricity demand during peak hours, turn down your thermostat and delay charging your electric vehicle until after 7 PM.
+[2025-05-15T16:22:26Z] cycle complete – insights=1, actions=0
+✨ agentic-home-energy orchestrator running – Ctrl-C to exit
+🤖 CEO says: Lower your thermostat and charge your electric vehicle only when electricity prices are lower, typically at night or during off-peak times.
+[2025-05-15T16:22:37Z] cycle complete – insights=2, actions=0
+🤖 CEO says: To lower electricity demand during peak hours, turn down the thermostat and delay charging your electric vehicle.
+[2025-05-15T16:22:47Z] cycle complete – insights=3, actions=0
