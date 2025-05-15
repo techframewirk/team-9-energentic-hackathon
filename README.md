@@ -95,9 +95,9 @@ WIAN (Watts In A Name) is an intelligent energy management system that transform
 
 ## Demo & Visuals
 
-* **WattsinaName Team 9 Energentic Hackathon (with voiceover)**: https://youtu.be/zvpKG7wQy7Q
-* **WattsinaName Team 9 Energentic Hackathon (with backend view)**: https://youtu.be/8vXeuhzAu7A
-* **Screenshots**: https://drive.google.com/drive/folders/1NjbCc4MyMSEGdyXcXpxnCZEsaZd_8t7l?usp=sharing
+* [**WattsinaName Team 9 Energentic Hackathon (with voiceover)**:] (https://youtu.be/zvpKG7wQy7Q)
+* [**WattsinaName Team 9 Energentic Hackathon (with backend view)**:] (https://youtu.be/8vXeuhzAu7A)
+* [**Screenshots**:] (https://drive.google.com/drive/folders/1NjbCc4MyMSEGdyXcXpxnCZEsaZd_8t7l?usp=sharing)
 ---
 
 ## Challenges & Insights
