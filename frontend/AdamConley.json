@@ -1,0 +1,111 @@
+{
+    "id": 1674,
+    "code": "MTR-0010",
+    "consumptionLoadFactor": 1,
+    "productionLoadFactor": 0,
+    "type": "SMART",
+    "city": "San Francisco",
+    "state": "CA",
+    "latitude": 37.8,
+    "longitude": -122.38,
+    "pincode": "94103",
+    "createdAt": "2025-05-15T08:50:10.755Z",
+    "updatedAt": "2025-05-15T08:50:10.755Z",
+    "publishedAt": "2025-05-15T08:50:10.755Z",
+    "max_capacity_KW": 10,
+    "energyResource": {
+        "id": 1975,
+        "name": "Adam Conley",
+        "type": "CONSUMER",
+        "createdAt": "2025-05-15T08:50:11.697Z",
+        "updatedAt": "2025-05-15T08:50:11.697Z",
+        "publishedAt": "2025-05-15T08:50:11.697Z",
+        "ders": [
+            {
+                "id": 3320,
+                "switched_on": true,
+                "createdAt": "2025-05-15T08:50:13.050Z",
+                "updatedAt": "2025-05-15T11:00:53.272Z",
+                "publishedAt": "2025-05-15T08:50:13.050Z",
+                "appliance": {
+                    "id": 10,
+                    "name": "Electric Geyser",
+                    "powerRating": 3000,
+                    "baseKWh": 0.05,
+                    "description": "Very high-demand heating",
+                    "createdAt": "2025-05-11T11:08:13.771Z",
+                    "updatedAt": "2025-05-11T11:08:13.771Z",
+                    "publishedAt": "2025-05-11T11:08:13.770Z"
+                }
+            },
+            {
+                "id": 3323,
+                "switched_on": true,
+                "createdAt": "2025-05-15T08:50:13.092Z",
+                "updatedAt": "2025-05-15T08:50:13.092Z",
+                "publishedAt": "2025-05-15T08:50:13.092Z",
+                "appliance": {
+                    "id": 12,
+                    "name": "Solar Panel (production)",
+                    "powerRating": 1200,
+                    "baseKWh": 0.02,
+                    "description": "",
+                    "createdAt": "2025-05-11T11:08:13.813Z",
+                    "updatedAt": "2025-05-11T11:08:13.813Z",
+                    "publishedAt": "2025-05-11T11:08:13.812Z"
+                }
+            },
+            {
+                "id": 3327,
+                "switched_on": true,
+                "createdAt": "2025-05-15T08:50:13.120Z",
+                "updatedAt": "2025-05-15T08:50:13.120Z",
+                "publishedAt": "2025-05-15T08:50:13.120Z",
+                "appliance": {
+                    "id": 12,
+                    "name": "Solar Panel (production)",
+                    "powerRating": 1200,
+                    "baseKWh": 0.02,
+                    "description": "",
+                    "createdAt": "2025-05-11T11:08:13.813Z",
+                    "updatedAt": "2025-05-11T11:08:13.813Z",
+                    "publishedAt": "2025-05-11T11:08:13.812Z"
+                }
+            },
+            {
+                "id": 3329,
+                "switched_on": true,
+                "createdAt": "2025-05-15T08:50:13.137Z",
+                "updatedAt": "2025-05-15T08:50:13.137Z",
+                "publishedAt": "2025-05-15T08:50:13.137Z",
+                "appliance": {
+                    "id": 6,
+                    "name": "Microwave Oven",
+                    "powerRating": 1000,
+                    "baseKWh": 0.01667,
+                    "description": "High-power but short usage",
+                    "createdAt": "2025-05-11T11:08:13.682Z",
+                    "updatedAt": "2025-05-11T11:08:13.682Z",
+                    "publishedAt": "2025-05-11T11:08:13.682Z"
+                }
+            },
+            {
+                "id": 3331,
+                "switched_on": true,
+                "createdAt": "2025-05-15T08:50:13.148Z",
+                "updatedAt": "2025-05-15T08:50:13.148Z",
+                "publishedAt": "2025-05-15T08:50:13.148Z",
+                "appliance": {
+                    "id": 10,
+                    "name": "Electric Geyser",
+                    "powerRating": 3000,
+                    "baseKWh": 0.05,
+                    "description": "Very high-demand heating",
+                    "createdAt": "2025-05-11T11:08:13.771Z",
+                    "updatedAt": "2025-05-11T11:08:13.771Z",
+                    "publishedAt": "2025-05-11T11:08:13.770Z"
+                }
+            }
+        ]
+    }
+}

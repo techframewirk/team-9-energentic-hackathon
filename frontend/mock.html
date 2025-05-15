@@ -1,0 +1,517 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>WATTY: Smart Energy Assistant</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+  <style>
+    body { font-family: 'Poppins', sans-serif; background-color: #f9fafb; margin:0; padding:1.5rem; color:#090822; }
+    .container { max-width:400px; margin:0 auto; display:flex; flex-direction:column; gap:1.5rem; }
+    .card { background:white; border-radius:16px; box-shadow:0 4px 12px rgba(0,0,0,0.04); padding:1.2rem 1.5rem; }
+    .status-card h2 { margin:0; font-size:1.1rem; font-weight:700; }
+    .status-header { display:flex; justify-content:space-between; align-items:center; margin-bottom:.8rem; }
+    .status-avatar { background:#DBEAFE; color:#1D4ED8; width:40px; height:40px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:1.2rem; }
+    .status-pill { background:#DCFCE7; color:#166534; font-weight:600; font-size:.85rem; padding:.4rem 1rem; border-radius:9999px; margin-bottom:.5rem; cursor:pointer; }
+    .status-pill.paused { background:#FEE2E2; color:#991B1A; }
+    .last-action { font-size:.85rem; color:#6B7280; margin:0; }
+    .circle-buttons { display:flex; justify-content:space-between; gap:1rem; text-align:center; }
+    .circle-button { background:#f3f4f6; border-radius:50%; width:90px; height:90px; display:flex; flex-direction:column; justify-content:center; align-items:center; padding:.5rem; box-shadow:0 4px 8px rgba(0,0,0,0.05); transition:transform .2s ease; cursor:pointer; }
+    .circle-button:hover { transform:scale(1.05); }
+    .value { font-size:1rem; font-weight:600; line-height:1.2; }
+    .label { font-size:.75rem; color:#6B7280; margin-top:.2rem; }
+    .circle-button.green { background:#DCFCE7; color:#16A34A; }
+    .circle-button.purple { background:#EDE9FE; color:#7C3AED; }
+    .circle-button.gray { background:#F3F4F6; color:#374151; }
+    .hero-card { background:#C1AFF5; color:white; padding:1.2rem 1.5rem; border-radius:16px; text-align:center; }
+    .hero-card h2 { margin:0 0 .5rem; font-size:1.1rem; }
+    .badge { background:white; color:#6B21A8; padding:.4rem 1rem; border-radius:9999px; font-weight:600; font-size:.85rem; }
+    .schedule h3 { margin-bottom:1rem; font-size:1rem; font-weight:700; }
+    .schedule-list-alt { display:flex; flex-direction:column; gap:1rem; }
+    .task-row { display:flex; gap:1rem; align-items:flex-start; }
+    .task-icon { background:#E0E7FF; color:#4338CA; border-radius:50%; width:40px; height:40px; display:flex; align-items:center; justify-content:center; font-size:1.1rem; }
+    .task-title { font-weight:600; font-size:.95rem; color:#111827; }
+    .task-subtext { font-size:.85rem; color:#6B7280; }
+    .footer-card { display:flex; align-items:center; gap:.8rem; background:#f3f4f6; padding:1rem; border-radius:16px; }
+    .footer-icon { font-size:1.5rem; }
+    .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); align-items: center; justify-content: center; }
+    .modal-content { background: white; border-radius: 8px; padding: 1.5rem; max-width: 600px; width: 90%; max-height: 80%; overflow-y: auto; position: relative; }
+    #solar-close { position: absolute; top: 0.5rem; right: 0.75rem; background: none; border: none; font-size: 1.5rem; cursor: pointer; }
+    #solar-list li { margin: 0.75rem 0; padding-bottom: 0.5rem; border-bottom: 1px solid #e5e7eb; }
+    .task-row, .manual-row { cursor: pointer; transition: transform .15s ease; }
+    .task-row:hover,.manual-row:hover { transform: scale(1.02); }
+    .status-pill { transition: transform .15s ease; }
+    .status-pill:hover { transform: scale(1.02); }
+    .badge { transition: transform .15s ease; }
+    .badge:hover { transform: scale(1.02); }
+    #solar-list li { transition: transform .15s ease; }
+    #solar-list li:hover { transform: scale(1.02); }
+    @media (max-width:420px){ .container{padding:1rem;} }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+
+    <!-- Status Card -->
+    <div class="card status-card">
+      <div class="status-header">
+        <h2>Your home is in Optimal Energy Mode</h2>
+        <div class="status-avatar">👤</div>
+      </div>
+      <button id="agent-toggle" class="status-pill">
+        🟢 AI Agents Active
+      </button>
+      <p class="last-action">Last action: Shifted washing machine to night slot at 3:14 AM</p>
+    </div>
+
+    <!-- KPIs -->
+    <div class="card circle-buttons">
+      <div class="circle-button green">
+        <span id="saved-value" class="value">$0.94</span>
+        <span class="label">Saved</span>
+      </div>
+      <div class="circle-button purple">
+        <span id="reduced-value" class="value">2.0</span>
+        <span class="label">kWh Reduced</span>
+      </div>
+      <div class="circle-button gray">
+        <span id="co2-value" class="value">1.8 kg</span>
+        <span class="label">CO₂ Avoided</span>
+      </div>
+    </div>
+
+    <!-- Motivation Card -->
+    <div class="hero-card">
+      <h2>You’re saving better than 91% of your neighborhood!</h2>
+      <div class="badge">🏅 Energy Hero – Level 2</div>
+    </div>
+
+    <!-- New Green Hero Card -->
+    <div class="hero-card" style="background-color: #DCFCE7; color: #166534;">
+      <h2>🥇 Your squad is in the top 9% of energy savers!*</h2>
+    </div>
+
+    <!-- Task List -->
+    <div class="card schedule">
+      <h3>What Your AI Agent Is Taking Care Of</h3>
+      <div class="schedule-list-alt">
+        <div class="task-row">
+          <div class="task-icon">⏰</div>
+          <div>
+            <div class="task-title">Reduce AC by 1°C at 2:30 AM</div>
+            <div class="task-subtext">Optimizing for comfort during sleep hours</div>
+          </div>
+        </div>
+        <div class="task-row">
+          <div class="task-icon">💤</div>
+          <div>
+            <div class="task-title">Auto-sleep 2 idle devices</div>
+            <div class="task-subtext">TV and gaming console in standby mode</div>
+          </div>
+        </div>
+        <div class="task-row" id="solar-btn">
+          <div class="task-icon">🛍️</div>
+          <div>
+            <div class="task-title">Switch to Greener Energy</div>
+            <div class="task-subtext">Browse Solar Panels via Beckn</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Manual Toggle Block -->
+    <div class="card manual-card">
+      <h3>Manually Turn On/Off</h3>
+      <div id="manual-controls"><!-- injected by JS --></div>
+    </div>
+
+
+    <!-- Solar Lightbox -->
+    <div id="solar-modal" class="modal">
+      <div class="modal-content">
+        <button id="solar-close">&times;</button>
+        <h3>Available Solar Panels</h3>
+
+        <!-- Results will be injected here -->
+        <ul id="solar-list" style="list-style:none; padding:0; margin:0;"></ul>
+
+        <!-- Purchase status messages -->
+        <div id="purchase-status" style="margin-top:1rem; font-weight:600;"></div>
+      </div>
+    </div>
+
+    <!-- main.py Output -->
+    <div class="card" style="max-height:200px; overflow:auto; font-family:monospace; white-space:pre-wrap;">
+      <h3 style="margin:0 0 .5rem; font-size:.9rem;">CEO Agent Output</h3>
+      <div id="console-main" style="font-size:.75rem; color:#374151;"></div>
+    </div>
+
+    <!-- Agent Console -->
+    <div class="card" style="max-height:200px; overflow:auto; font-family:monospace; white-space:pre-wrap;">
+      <h3 style="margin:0 0 .5rem; font-size:.9rem;">Agent Console</h3>
+      <div id="console-output" style="font-size:.75rem; color:#374151;"></div>
+    </div>
+
+    <!-- Footer -->
+    <div class="footer-card">
+      <div class="footer-icon">🤖</div>
+      <div>You don’t need to lift a finger.</div>
+    </div>
+  </div>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      // ---- CONFIG ----
+      const API        = 'http://localhost:5001';
+      const DATA_API   = 'http://world-engine-team4.becknprotocol.io/meter-data-simulator';
+      const METER_ID   = 1674;
+      const TARIFF_USD = 0.468;
+      const EMISSIONS_KG = 0.9;
+      const INITIAL_KWH  = 2;
+
+      const BECKN_BASE = 'https://bap-ps-client-deg-team4.becknprotocol.io';
+      const BAP_ID     = 'bap-ps-network-deg-team4.becknprotocol.io';
+      const BAP_URI    = 'https://bap-ps-network-deg-team4.becknprotocol.io';
+      const BPP_ID     = 'bpp-ps-network-deg-team4.becknprotocol.io';
+      const BPP_URI    = 'https://bpp-ps-network-deg-team4.becknprotocol.io';
+
+      const solarBtn   = document.getElementById('solar-btn');
+      const solarModal = document.getElementById('solar-modal');
+      const solarList  = document.getElementById('solar-list');
+      const solarClose = document.getElementById('solar-close');
+
+      // ---- STATUS TOGGLE ----
+      const toggleBtn = document.getElementById('agent-toggle');
+      let isActive = true;
+      function updateToggle() {
+        toggleBtn.classList.toggle('paused', !isActive);
+        toggleBtn.textContent = isActive
+          ? '🟢 AI Agents Active'
+          : '🔴 AI Agent Paused';
+      }
+      async function sendToggle() {
+        await fetch(`${API}/api/agent/toggle`, {
+          method: 'POST',
+          headers:{'Content-Type':'application/json'},
+          body:JSON.stringify({active:isActive})
+        });
+      }
+      toggleBtn.addEventListener('click', async () => {
+        isActive = !isActive;
+        updateToggle();
+        await sendToggle();
+      });
+
+      // ---- FETCH METER DATA ----
+      async function fetchWindow(from, to) {
+        const url = `${DATA_API}/meter-datasets/${METER_ID}`+
+                    `?from=${encodeURIComponent(from)}&to=${encodeURIComponent(to)}`;
+        const res = await fetch(url);
+        const json = await res.json();
+        return json.data || [];
+      }
+
+      // ---- UPDATE KPIs ----
+      async function updateKPIs() {
+        const now    = new Date();
+        const toISO  = now.toISOString();
+        const from24 = new Date(now - 24*3600*1000).toISOString();
+        const from48 = new Date(now - 48*3600*1000).toISOString();
+        const [thisDay, lastDay] = await Promise.all([
+          fetchWindow(from24, toISO),
+          fetchWindow(from48, from24)
+        ]);
+        const sumNet = arr => arr.reduce((sum,r)=>sum+(r.consumptionKWh - r.productionKWh),0);
+        const actual   = sumNet(thisDay);
+        const baseline = sumNet(lastDay);
+        const reduced  = Math.max(0, baseline - actual) + INITIAL_KWH;
+        const savedUSD = reduced * TARIFF_USD;
+        const co2kg    = reduced * EMISSIONS_KG;
+        document.getElementById('reduced-value').textContent = reduced.toFixed(1);
+        document.getElementById('saved-value').textContent   = `$${savedUSD.toFixed(2)}`;
+        document.getElementById('co2-value').textContent     = `${co2kg.toFixed(1)} kg`;
+      }
+
+      // ---- POLLING ----
+      const consoleAgent = document.getElementById('console-output');
+      const consoleMain  = document.getElementById('console-main');
+      async function pollAll() {
+        let r = await fetch(`${API}/api/logs`);
+        if (r.ok) consoleAgent.textContent = await r.text();
+        r = await fetch(`${API}/api/console`);
+        if (r.ok) consoleMain.textContent = await r.text();
+        updateKPIs();
+        [consoleAgent, consoleMain]
+          .forEach(el=>el.parentElement.scrollTop=el.parentElement.scrollHeight);
+      }
+
+      // ---- UUID POLYFILL ----
+      function randomUUID() {
+        if (crypto.randomUUID) return crypto.randomUUID();
+        return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, c => {
+          const r = (crypto.getRandomValues(new Uint8Array(1))[0] & 0xf) >> (c === 'x' ? 0 : 0);
+          const v = c === 'x' ? r : (r & 0x3) | 0x8;
+          return v.toString(16);
+        });
+      }
+
+      // ---- OPEN LIGHTBOX & SEARCH ----
+      solarBtn.addEventListener('click', async () => {
+      solarModal.style.display = 'flex';
+
+      // set up rotating ellipsis for loading
+      solarList.innerHTML = '<li><span id="loading-text">Loading</span></li>';
+      const loadingText = document.getElementById('loading-text');
+      let ldots = 0;
+      const loadingInterval = setInterval(() => {
+        ldots = (ldots % 3) + 1;
+        loadingText.textContent = 'Loading' + '.'.repeat(ldots);
+      }, 500);
+
+      const body = {
+        context: {
+          domain:   'deg:retail',
+          action:   'search',
+          location: { country:{code:'USA'}, city:{code:'NANP:628'} },
+          version:  '1.1.0',
+          bap_id:   BAP_ID, bap_uri: BAP_URI,
+          bpp_id:   BPP_ID, bpp_uri: BPP_URI,
+          transaction_id: randomUUID(),
+          message_id:     randomUUID(),
+          timestamp:      new Date().toISOString()
+        },
+        message: {
+          intent: { item:{ descriptor:{ name:'solar' } } }
+        }
+      };
+
+      try {
+        const res  = await fetch(`${BECKN_BASE}/search`, {
+          method:'POST',
+          headers:{'Content-Type':'application/json'},
+          body: JSON.stringify(body)
+        });
+        const data = await res.json();
+        clearInterval(loadingInterval);
+
+        const cat = data.responses
+          ? data.responses[0].message.catalog
+          : data.message.catalog;
+
+        solarList.innerHTML = '';
+        cat.providers.forEach(provider => {
+          provider.items.forEach(item => {
+            const li = document.createElement('li');
+            li.textContent = `${item.descriptor.name} — ${item.price.currency} ${item.price.value}`;
+            li.style.cursor = 'pointer';
+            li.dataset.providerId    = provider.id;
+            li.dataset.itemId        = item.id;
+            li.dataset.fulfillmentId = item.fulfillment_ids[0];
+            solarList.appendChild(li);
+            li.addEventListener('click', () =>
+              purchaseItem(
+                li.dataset.providerId,
+                li.dataset.itemId,
+                li.dataset.fulfillmentId
+              )
+            );
+          });
+        });
+      } catch (e) {
+        clearInterval(loadingInterval);
+        console.error(e);
+        solarList.innerHTML = '<li>Error loading solar options</li>';
+      }
+    });
+
+    solarClose.addEventListener('click', () => {
+      solarModal.style.display = 'none';
+    });
+
+      // ---- FULL PURCHASE FLOW WITH REAL‐TIME UPDATES ----
+      async function purchaseItem(providerId, itemId, fulfillmentId) {
+        const statusEl = document.getElementById('purchase-status');
+        let ellipsisInterval;
+
+        const startEllipsis = stage => {
+          clearInterval(ellipsisInterval);
+          let dots = 0;
+          ellipsisInterval = setInterval(() => {
+            dots = (dots % 3) + 1;
+            statusEl.textContent = `Purchasing${'.'.repeat(dots)} (${stage})`;
+          }, 500);
+        };
+
+        const makeCtx = action => ({
+          domain:   'deg:retail',
+          action,
+          location: { country:{code:'USA'}, city:{code:'NANP:628'} },
+          version:  '1.1.0',
+          bap_id:   BAP_ID, bap_uri: BAP_URI,
+          bpp_id:   BPP_ID, bpp_uri: BPP_URI,
+          transaction_id: randomUUID(),
+          message_id:     randomUUID(),
+          timestamp:      new Date().toISOString()
+        });
+
+        try {
+          // SELECT
+          startEllipsis('Agent is selecting your choice');
+          let resp = await fetch(`${BECKN_BASE}/select`, {
+            method:'POST',
+            headers:{'Content-Type':'application/json'},
+            body: JSON.stringify({
+              context: makeCtx('select'),
+              message: { order:{ provider:{id:providerId}, items:[{id:itemId}] } }
+            })
+          });
+          if (!resp.ok) throw 'select failed';
+
+          // INIT
+          startEllipsis('Agent is initializing your order');
+          resp = await fetch(`${BECKN_BASE}/init`, {
+            method:'POST',
+            headers:{'Content-Type':'application/json'},
+            body: JSON.stringify({
+              context: makeCtx('init'),
+              message: { order:{ provider:{id:providerId}, items:[{id:itemId}] } }
+            })
+          });
+          if (!resp.ok) throw 'init failed';
+
+          // CONFIRM
+          startEllipsis('Agent is confirming your order');
+          resp = await fetch(`${BECKN_BASE}/confirm`, {
+            method:'POST',
+            headers:{'Content-Type':'application/json'},
+            body: JSON.stringify({
+              context: makeCtx('confirm'),
+              message: {
+                order:{
+                  provider:{id:providerId},
+                  items:[{id:itemId}],
+                  fulfillments:[{
+                    id: fulfillmentId,
+                    customer:{
+                      person:{ name:'Lisa' },
+                      contact:{ phone:'876756454', email:'LisaS@mailinator.com' }
+                    }
+                  }]
+                }
+              }
+            })
+          });
+          if (!resp.ok) throw 'confirm failed';
+
+          clearInterval(ellipsisInterval);
+          const { responses } = await resp.json();
+          const orderId = responses?.[0]?.message?.order?.id;
+          statusEl.textContent = orderId
+            ? `✅ Purchase Confirmed! Order ID: ${orderId}`
+            : '✅ Purchase Confirmed!';
+        }
+        catch (err) {
+          console.error(err);
+          clearInterval(ellipsisInterval);
+          statusEl.textContent = '❌ Transaction Failed';
+        }
+      }
+
+      // ---- TOGGLE
+       async function loadDeviceToggles() {
+        try {
+          const res = await fetch(`${DATA_API}/utility/detailed`);
+          const json = await res.json();
+          const utilities = json.utilities || [];
+
+          let ders = [];
+          outer:
+          for (const util of utilities) {
+            for (const sub of util.substations || []) {
+              for (const trans of sub.transformers || []) {
+                for (const meter of trans.meters || []) {
+                  if (meter.code === 'MTR-0010') {
+                    ders = meter.energyResource?.ders || [];
+                    break outer;
+                  }
+                }
+              }
+            }
+          }
+
+          const container = document.getElementById('manual-controls');
+          container.innerHTML = '';
+
+          ders.forEach(der => {
+            const name  = der.appliance.name;
+            const onOff = der.switched_on;
+
+            const row = document.createElement('div');
+            row.className = 'manual-row';
+
+            const label = document.createElement('span');
+            label.className = 'toggle-label';
+            label.textContent = name;
+
+            const wrapper = document.createElement('label');
+            wrapper.className = 'toggle-switch';
+
+            const checkbox = document.createElement('input');
+            checkbox.type = 'checkbox';
+            checkbox.checked = onOff;
+
+            // --- NEW: on change, POST to toggle-der endpoint ---
+            checkbox.addEventListener('change', async () => {
+              const newState = checkbox.checked;
+              // optimistically disable until response
+              checkbox.disabled = true;
+              try {
+                const resp = await fetch(`${DATA_API}/toggle-der/1975`, {
+                  method: 'POST',
+                  headers: { 'Content-Type': 'application/json' },
+                  body: JSON.stringify({
+                    der_id: der.id.toString(),
+                    switched_on: newState
+                  })
+                });
+                if (!resp.ok) throw new Error(`Status ${resp.status}`);
+                const payload = await resp.json();
+                // update timestamp or re-enable checkbox
+                console.log(payload.message);
+              } catch (e) {
+                console.error('Toggle failed:', e);
+                // revert UI on error
+                checkbox.checked = !newState;
+                alert('Failed to toggle "' + name + '". Please try again.');
+              } finally {
+                checkbox.disabled = false;
+              }
+            });
+
+            const slider = document.createElement('span');
+            slider.className = 'slider';
+
+            wrapper.appendChild(checkbox);
+            wrapper.appendChild(slider);
+
+            row.appendChild(label);
+            row.appendChild(wrapper);
+            container.appendChild(row);
+          });
+        }
+        catch (err) {
+          console.error('Failed to load device toggles:', err);
+          document.getElementById('manual-controls').textContent = 'Error loading devices.';
+        }
+      }
+      // ---- BOOTSTRAP ----
+      updateToggle();
+      sendToggle();
+      loadDeviceToggles();
+      pollAll();
+      setInterval(pollAll, 30000);
+    });
+  </script>
+</body>
+</html>
